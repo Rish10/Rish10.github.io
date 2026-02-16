@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thursday Night in Corporate America</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --paper: #f5f0e8;
+    --accent: #c8392b;
+    --gold: #b8860b;
+    --muted: #6b5e4e;
+    --rule: #c8b89a;
+    --green: #2d6a4f;
+    --red: #c8392b;
+    --blue: #1a3a5c;
+    --highlight: #fdf3d0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* MASTHEAD */
+  .masthead {
+    text-align: center;
+    padding: 3rem 2rem 1rem;
+    border-bottom: 3px double var(--rule);
+    position: relative;
+  }
+
+  .masthead-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .masthead-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .masthead-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .masthead-sub {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0.75rem auto 0;
+  }
+
+  .rule-ornament {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    justify-content: center;
+  }
+
+  .rule-ornament::before,
+  .rule-ornament::after {
+    content: '';
+    flex: 1;
+    max-width: 200px;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .rule-ornament span {
+    font-size: 1.2rem;
+    color: var(--rule);
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* READING PROGRESS */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    width: 0%;
+    z-index: 999;
+    transition: width 0.1s linear;
+  }
+
+  /* READING TIME */
+  .reading-meta {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 0.75rem 2rem;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .reading-meta span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .reading-meta .dot { color: var(--accent); }
+
+  /* CHAPTER NAVIGATION */
+  .chapter-nav {
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    z-index: 100;
+    padding: 0.6rem 2rem;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .chapter-nav::-webkit-scrollbar { display: none; }
+
+  .chapter-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .chapter-btn:hover, .chapter-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* ARTICLE BODY */
+  .article {
+    padding: 3rem 0 6rem;
+  }
+
+  /* LEDE */
+  .lede {
+    font-size: 1.3rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--ink);
+    padding: 2rem 0 2rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 2.5rem;
+    font-style: italic;
+  }
+
+  /* CHAPTER */
+  .chapter {
+    margin-bottom: 3rem;
+    scroll-margin-top: 80px;
+  }
+
+  .chapter-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .chapter-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .chapter-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  .chapter-title em { 
+    font-style: italic; 
+    color: var(--accent);
+  }
+
+  /* PARAGRAPHS */
+  p {
+    margin-bottom: 1.25rem;
+    color: var(--ink);
+  }
+
+  /* PULL QUOTE */
+  .pull-quote {
+    margin: 2rem -2rem;
+    padding: 1.75rem 2rem;
+    background: var(--ink);
+    color: var(--paper);
+    border-left: 4px solid var(--accent);
+    position: relative;
+  }
+
+  .pull-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--paper);
+    margin: 0;
+  }
+
+  .pull-quote .attribution {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--rule);
+    margin-top: 0.75rem;
+    display: block;
+  }
+
+  /* COMPANY CARD - inline */
+  .company-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: white;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--rule);
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 2px;
+    box-shadow: 2px 2px 0 var(--rule);
+    transition: transform 0.15s;
+    cursor: default;
+  }
+
+  .company-card:hover {
+    transform: translateX(3px);
+  }
+
+  .company-card.win { border-left-color: var(--green); }
+  .company-card.loss { border-left-color: var(--red); }
+  .company-card.blowout { border-left-color: var(--gold); }
+  .company-card.mixed { border-left-color: var(--blue); }
+
+  .card-ticker {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    min-width: 60px;
+    padding-top: 0.1rem;
+  }
+
+  .card-ticker .badge {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .card-ticker .symbol {
+    display: block;
+    letter-spacing: 0.05em;
+  }
+
+  .card-body {
+    flex: 1;
+  }
+
+  .card-body strong {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .card-body p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .card-stat {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .card-stat .surprise.pos { color: var(--green); font-weight: 500; }
+  .card-stat .surprise.neg { color: var(--red); font-weight: 500; }
+  .card-stat .surprise.blow { color: var(--gold); font-weight: 500; }
+
+  /* SCOREBOARD - between chapters */
+  .mini-scoreboard {
+    margin: 2rem 0;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+  .scoreboard-header {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .scoreboard-row {
+    display: grid;
+    grid-template-columns: 70px 1fr auto auto;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    align-items: center;
+    font-size: 0.85rem;
+    transition: background 0.1s;
+  }
+
+  .scoreboard-row:hover { background: rgba(200,185,154,0.2); }
+  .scoreboard-row:last-child { border-bottom: none; }
+
+  .sb-ticker {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .sb-name { color: var(--muted); font-size: 0.85rem; }
+
+  .sb-eps {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    text-align: right;
+  }
+
+  .sb-verdict {
+    font-size: 0.8rem;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .pos { color: var(--green); }
+  .neg { color: var(--red); }
+  .gold { color: var(--gold); }
+
+  /* CHAPTER DIVIDER */
+  .chapter-divider {
+    text-align: center;
+    margin: 3rem 0;
+    color: var(--rule);
+    font-size: 1.5rem;
+    letter-spacing: 1rem;
+  }
+
+  /* HIGHLIGHT BOX */
+  .highlight-box {
+    background: var(--highlight);
+    border: 1px solid #e8d89a;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 2px;
+  }
+
+  .highlight-box .box-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .highlight-box p {
+    font-size: 0.95rem;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  /* DROPCAP */
+  .dropcap::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.5rem;
+    font-weight: 900;
+    float: left;
+    line-height: 0.75;
+    margin: 0.1rem 0.15rem 0 0;
+    color: var(--accent);
+  }
+
+  /* FINAL SCOREBOARD */
+  .final-scoreboard {
+    margin: 2rem 0;
+  }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .score-cell {
+    border: 1px solid var(--rule);
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .score-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* FOOTNOTE */
+  .footnote {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 3px double var(--rule);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ANIMATIONS */
+  .chapter { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .chapter.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 600px) {
+    .pull-quote { margin: 2rem -1rem; }
+    .score-grid { grid-template-columns: 1fr 1fr; }
+    .scoreboard-row { grid-template-columns: 60px 1fr auto; }
+    .sb-eps { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<header class="masthead">
+  <div class="masthead-date">February 12, 2026 &nbsp;·&nbsp; After Hours &nbsp;·&nbsp; Wall Street</div>
+  <h1 class="masthead-title">Thursday Night<br>in <em>Corporate</em><br>America</h1>
+  <div class="rule-ornament"><span>❧</span></div>
+  <p class="masthead-sub">One hundred companies walked into their quarterly reckoning. Here's what happened — told as a story.</p>
+</header>
+
+<div class="reading-meta">
+  <span>📖 ~22 min read</span>
+  <span class="dot">◆</span>
+  <span>100 companies</span>
+  <span class="dot">◆</span>
+  <span>Q4 2025 Earnings</span>
+</div>
+
+<nav class="chapter-nav" id="chapterNav">
+  <button class="chapter-btn active" onclick="scrollTo('ch0')">Setting the Scene</button>
+  <button class="chapter-btn" onclick="scrollTo('ch1')">The Tech Giants</button>
+  <button class="chapter-btn" onclick="scrollTo('ch2')">The Rockstars</button>
+  <button class="chapter-btn" onclick="scrollTo('ch3')">The Comeback Kids</button>
+  <button class="chapter-btn" onclick="scrollTo('ch4')">The Struggling</button>
+  <button class="chapter-btn" onclick="scrollTo('ch5')">The Quiet Steadies</button>
+  <button class="chapter-btn" onclick="scrollTo('ch6')">The Wild Cards</button>
+  <button class="chapter-btn" onclick="scrollTo('ch7')">The Verdict</button>
+</nav>
+
+<div class="container">
+  <article class="article">
+
+    <p class="lede">Every three months, America's corporations must stand before the market and confess. Not their sins — their numbers. On the night of Thursday, February 12th, 2026, roughly one hundred of them did exactly that. Some soared. Some stumbled. A few shocked even themselves. This is what happened.</p>
+
+    <!-- CHAPTER 0: SETTING THE SCENE -->
+    <div class="chapter" id="ch0">
+      <div class="chapter-label">Chapter One</div>
+      <h2 class="chapter-title">Setting the <em>Scene</em></h2>
+
+      <p class="dropcap">Picture the floor of a theater where every actor must perform the same monologue, but with completely different material. The script is always the same — revenue, earnings, guidance — but the delivery, the subtext, and the audience reaction vary wildly. That's earnings season. And Thursday night was a full house.</p>
+
+      <p>By 4:05 PM Eastern, the New York Stock Exchange had closed its doors for the day, and the floodgates opened. One after another, press releases hit the wires. CEOs and CFOs dialed into earnings calls from their offices, hotels, and home studies. Analysts furiously updated their models. And somewhere on trading desks from Manhattan to Singapore, the machines began to react.</p>
+
+      <p>The broader backdrop mattered: the S&P 500 was sitting on a strong earnings season. Roughly 74% of companies that had reported so far in Q4 2025 had beaten expectations — slightly below the historical average of 78%, but the <em>magnitude</em> of those beats was solid. Blended earnings growth for the index was running at 13.2% year-over-year, the fifth consecutive quarter of double-digit growth. Corporate America, broadly speaking, was healthy.</p>
+
+      <div class="highlight-box">
+        <div class="box-label">⚡ The Macro Context</div>
+        <p>The next morning — Friday the 13th — would bring a January CPI print of 2.4% headline inflation, cooler than feared. That would give the whole market a sigh of relief. But on Thursday night, nobody knew that yet. Everyone was flying blind, armed only with their models and their gut.</p>
+      </div>
+
+      <p>Into this theater walked one hundred companies. Let's meet them.</p>
+    </div>
+
+    <div class="chapter-divider">· · ·</div>
+
+    <!-- CHAPTER 1: TECH GIANTS -->
+    <div class="chapter" id="ch1">
+      <div class="chapter-label">Chapter Two</div>
+      <h2 class="chapter-title">The <em>Tech Giants</em> Speak</h2>
+
+      <p class="dropcap">If you wanted to understand where the economy was going, you started here. The semiconductor and networking companies weren't just reporting numbers — they were issuing prophecies about the AI-driven future, and Wall Street was listening like a congregation.</p>
+
+      <p><strong>Applied Materials</strong> stepped up first, and it set the tone for the entire night. The chipmaking equipment giant reported earnings of $2.38 per share — well above the $2.21 expected — and then CEO Gary Dickerson said something that made every AI investor lean forward in their chair: <em>"AI has reached a tipping point."</em> Not a tipping point in hype. In real capital investment. The company's customers — the world's biggest chip fabs — were telling AMAT they'd need significantly more equipment in the second half of 2026. The stock jumped 11% in after-hours trading.</p>
+
+      <div class="company-card blowout">
+        <div class="card-ticker"><span class="badge">🔥</span><span class="symbol">AMAT</span></div>
+        <div class="card-body">
+          <strong>Applied Materials</strong>
+          <p>The AI capex bellwether. Beat by 7.7%, stock +11%. H2 2026 demand ramp confirmed by customers with 1–2 yr visibility.</p>
+        </div>
+        <div class="card-stat"><span class="surprise blow">+7.7%</span><br>$2.38 EPS</div>
+      </div>
+
+      <p>Then came <strong>Arista Networks</strong>, the company that literally builds the pipes that AI data travels through. Their quarter was not merely good — it was historic. Full-year 2025 revenue hit $9 billion (up 29%), and for the first time in company history, they cleared $1 billion in net income in a single quarter. More strikingly, they raised their 2026 AI networking revenue target from $2.75 billion to $3.25 billion — essentially saying AI network demand is growing faster than even they had modeled.</p>
+
+      <p>There was one wrinkle: memory. The memory chips that go into Arista's networking gear had gotten so expensive and scarce that the company hinted at a one-time price increase on memory-heavy products. In most industries, a company hiking prices signals trouble. In Arista's case, it signaled the opposite — demand so fierce that customers had no alternative.</p>
+
+      <div class="company-card blowout">
+        <div class="card-ticker"><span class="badge">🔥</span><span class="symbol">ANET</span></div>
+        <div class="card-body">
+          <strong>Arista Networks</strong>
+          <p>Historic quarter. $9B full-year revenue, first $1B profit quarter. AI revenue target raised to $3.25B for 2026. Supply — not demand — is the constraint.</p>
+        </div>
+        <div class="card-stat"><span class="surprise blow">+7.2%</span><br>$0.75 EPS</div>
+      </div>
+
+      <div class="pull-quote">
+        <p>"Supply — not demand — being the binding constraint is actually a sign of profound strength. The market is ordering faster than the pipes can be built."</p>
+        <span class="attribution">Reading the Arista Networks call</span>
+      </div>
+
+      <p><strong>Check Point Software</strong> added to the tech triumphalism, smashing expectations by 22.8%. Cybersecurity, it turns out, is essentially recession-proof. When companies are cutting budgets, the last thing they cut is the lock on the door.</p>
+
+      <div class="company-card win">
+        <div class="card-ticker"><span class="badge">✅</span><span class="symbol">CHKP</span></div>
+        <div class="card-body">
+          <strong>Check Point Software</strong>
+          <p>+22.8% EPS beat. Cybersecurity spending is the last budget line to get cut — and this quarter proved it again.</p>
+        </div>
+        <div class="card-stat"><span class="surprise pos">+22.8%</span><br>$3.40 EPS</div>
+      </div>
+
+      <p><strong>JFrog</strong> and <strong>Twilio</strong> both beat expectations modestly, but the more interesting story was what they represented: the boring, unglamorous infrastructure of software development and business communications is quietly becoming AI-critical. JFrog's platform is now used to manage AI model deployments. Twilio's communications APIs power AI customer service bots at scale. Neither company advertises themselves as "AI companies." Both are quietly becoming one.</p>
+
+      <p><strong>Coinbase</strong> was the tech story with the most asterisks. On paper, it looked terrible — an EPS miss of 124.8%, reporting a loss of $2.49 per share versus the expected $0.96 profit. But the sophisticated reader knew to look past it. That loss was almost entirely a mark-to-market accounting effect from crypto prices fluctuating on Coinbase's balance sheet. Strip that away, and you found a company whose trading volume for full-year 2025 hit $5.2 trillion — up 156% year-over-year. The stock actually rose 2% after hours. The market had learned to read the Coinbase earnings like a foreign language.</p>
+
+      <div class="company-card mixed">
+        <div class="card-ticker"><span class="badge">⚠️</span><span class="symbol">COIN</span></div>
+        <div class="card-body">
+          <strong>Coinbase Global</strong>
+          <p>Headline EPS miss of 125% — but almost entirely accounting noise. Real story: $5.2T annual trading volume (+156%). Stock rose anyway.</p>
+        </div>
+        <div class="card-stat"><span class="surprise neg">-124.8%</span><br>-$2.49 EPS</div>
+      </div>
+    </div>
+
+    <div class="chapter-divider">· · ·</div>
+
+    <!-- CHAPTER 2: THE ROCKSTARS -->
+    <div class="chapter" id="ch2">
+      <div class="chapter-label">Chapter Three</div>
+      <h2 class="chapter-title">The Night's <em>Rockstars</em></h2>
+
+      <p class="dropcap">Every earnings season has its heroes — the companies that not only clear the bar but launch themselves over it with such force that the bar seems almost insulting in retrospect. Thursday night had several.</p>
+
+      <p><strong>Agnico Eagle Mines</strong> had spent a year mining gold at exactly the right time — gold prices were up roughly $1,700 per ounce year-over-year — and what made investors giddy wasn't just the profits, it was the discipline. Of every extra dollar gold gave them, Agnico captured 95 cents for shareholders. Their costs barely moved. And then they dropped the real bombshell: proven gold reserves at a record 55.4 million ounces. Production growth of 20 to 30 percent over the next decade. In gold mining, that's not a quarter — that's a dynasty announcement.</p>
+
+      <div class="company-card blowout">
+        <div class="card-ticker"><span class="badge">🔥</span><span class="symbol">AEM</span></div>
+        <div class="card-body">
+          <strong>Agnico Eagle Mines</strong>
+          <p>Record 55.4M oz reserves. 20–30% production growth over the next decade planned. Converted 95¢ of every $1 of higher gold prices to shareholders.</p>
+        </div>
+        <div class="card-stat"><span class="surprise blow">+21%</span><br>$2.70 EPS</div>
+      </div>
+
+      <p><strong>Howmet Aerospace</strong> quietly put up one of the most impressive industrial quarters of the year. Revenue up 15%. Earnings up 42%. Free cash flow of $1.43 billion with 93% conversion from net income — meaning almost every dollar of profit showed up as real cash. Defense aerospace grew 20%. Commercial engine spares for airlines grew 44%. If you'd fallen asleep in 2023 and woken up to this report, you'd think you'd misread the date.</p>
+
+      <p><strong>Roku</strong> was the night's most emotionally satisfying story. The streaming platform had spent years being loved by consumers and punished by investors — growing audiences, bleeding cash, missing profitability targets. Thursday night, it finally crossed the line. Full-year profitability for the first time. Revenue of $4.74 billion, up 15%. Guidance for 2026 of $5.5 billion and $635 million in EBITDA — that last number up 50% year-over-year. The stock jumped 13%, and you got the sense that somewhere, some long-suffering Roku bull was quietly crying into their portfolio.</p>
+
+      <div class="company-card blowout">
+        <div class="card-ticker"><span class="badge">🔥</span><span class="symbol">ROKU</span></div>
+        <div class="card-body">
+          <strong>Roku</strong>
+          <p>First ever full-year profitability. 90M+ households, 145.6B streaming hours. Stock +13%. After years of "almost" — this was the real thing.</p>
+        </div>
+        <div class="card-stat"><span class="surprise blow">+89%</span><br>$0.53 EPS</div>
+      </div>
+
+      <p><strong>Dutch Bros</strong> — the drive-through coffee chain that looks like a cult and operates like a machine — beat by 74%. <strong>Sphere Entertainment</strong> — the giant glowing ball in Las Vegas that some dismissed as a vanity project — beat by 901%. Yes, nine hundred and one percent. The unit economics of an immersive entertainment venue that can sell out 20,000 seats at premium prices turned out to be extraordinary. <strong>Air Lease Corporation</strong>, which simply buys planes and rents them to airlines, beat by 57% in a world where Boeing can't make planes fast enough and every plane that exists commands a premium lease rate.</p>
+
+      <div class="mini-scoreboard">
+        <div class="scoreboard-header"><span>The Night's Biggest Beats</span><span>Surprise %</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker gold">SPHR</span><span class="sb-name">Sphere Entertainment</span><span class="sb-eps gold">$1.55</span><span class="sb-verdict gold">+901%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker gold">PBF</span><span class="sb-name">PBF Energy</span><span class="sb-eps gold">$0.49</span><span class="sb-verdict gold">+550%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker gold">LXP</span><span class="sb-name">LXP Industrial</span><span class="sb-eps gold">$0.46</span><span class="sb-verdict gold">+770%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker gold">TXG</span><span class="sb-name">10x Genomics</span><span class="sb-eps gold">$0.07</span><span class="sb-verdict gold">+276%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker gold">H</span><span class="sb-name">Hyatt Hotels</span><span class="sb-eps gold">$1.33</span><span class="sb-verdict gold">+265%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker pos">BROS</span><span class="sb-name">Dutch Bros</span><span class="sb-eps pos">$0.17</span><span class="sb-verdict pos">+74%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker pos">IPGP</span><span class="sb-name">IPG Photonics</span><span class="sb-eps pos">$0.46</span><span class="sb-verdict pos">+84%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker pos">AL</span><span class="sb-name">Air Lease</span><span class="sb-eps pos">$1.74</span><span class="sb-verdict pos">+57%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker pos">DBD</span><span class="sb-name">Diebold Nixdorf</span><span class="sb-eps pos">$2.75</span><span class="sb-verdict pos">+67%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker pos">CHKP</span><span class="sb-name">Check Point Software</span><span class="sb-eps pos">$3.40</span><span class="sb-verdict pos">+23%</span></div>
+      </div>
+    </div>
+
+    <div class="chapter-divider">· · ·</div>
+
+    <!-- CHAPTER 3: COMEBACK KIDS -->
+    <div class="chapter" id="ch3">
+      <div class="chapter-label">Chapter Four</div>
+      <h2 class="chapter-title">The <em>Comeback Kids</em></h2>
+
+      <p class="dropcap">Some of Thursday's most compelling stories weren't about companies hitting new highs — they were about companies that had been written off, restructured, or beaten down, now showing signs of genuine life.</p>
+
+      <p><strong>Diebold Nixdorf</strong> was bankrupt in 2023. By Thursday night in 2026, the ATM manufacturer was reporting earnings of $2.75 per share against an expectation of $1.65. The leaner, restructured version of the company — freed from its debt burden — was actually generating the profits that the old, overleveraged version never could. Sometimes bankruptcy is the best thing that can happen to a business.</p>
+
+      <p><strong>West Pharmaceutical Services</strong> makes the little rubber stoppers and injection components that go into syringes and drug vials. Unexciting, right? Until you realize that GLP-1 obesity drugs like Ozempic and Wegovy require enormous quantities of injectable drug delivery components, and West Pharma makes them. Beat by 11.5%. The unglamorous beneficiary of the biggest pharmaceutical trend of the decade.</p>
+
+      <div class="company-card win">
+        <div class="card-ticker"><span class="badge">✅</span><span class="symbol">WST</span></div>
+        <div class="card-body">
+          <strong>West Pharmaceutical Services</strong>
+          <p>Makes the components that go into GLP-1 drug injections. Ozempic's quiet supplier. Beat by 11.5% — the boring infrastructure of a medical revolution.</p>
+        </div>
+        <div class="card-stat"><span class="surprise pos">+11.5%</span><br>$2.04 EPS</div>
+      </div>
+
+      <p><strong>Toast</strong> — the restaurant technology company — beat estimates again and quietly revealed that its embedded financial services business (payroll, capital lending, payments) was becoming as important as the original point-of-sale product. Toast started as a way for restaurants to take orders on a tablet. It's becoming the financial operating system of the American restaurant industry.</p>
+
+      <p><strong>IPG Photonics</strong> makes industrial fiber lasers — the kind used to cut, weld, and engrave metal in factories. The company had been deep in a trough as manufacturing capex dried up. Thursday night's 84% EPS beat suggested the trough was behind them, with EV battery manufacturing and aerospace factory automation picking up the slack. Not glamorous. Very profitable.</p>
+
+      <div class="pull-quote">
+        <p>"The most interesting companies of the night weren't the ones you'd expected to perform. They were the ones nobody was paying attention to — quietly building the infrastructure of the next industrial era."</p>
+        <span class="attribution">Reading the room, Thursday night</span>
+      </div>
+
+      <p><strong>Anheuser-Busch InBev</strong> had a more subtle comeback story. The world's largest brewer has spent years trying to shake off the hangover from the Bud Light controversy of 2023. Thursday's numbers showed progress: non-alcoholic beer up 34%, premium brands growing faster than the portfolio, Michelob ULTRA and Busch Light the top two volume gainers in the U.S. No one was declaring victory, but the patient was clearly recovering.</p>
+
+      <p><strong>Airbnb</strong> technically missed on EPS — but for a reason most analysts decided to forgive. A one-time $90 million non-income tax charge distorted the headline number. Underneath it, gross booking value grew 16% year-over-year, the fastest rate in over two years. Management pointedly excluded any AI contribution from their 2026 guidance. Translation: if AI works the way Brian Chesky thinks it will, the guidance is very conservative.</p>
+    </div>
+
+    <div class="chapter-divider">· · ·</div>
+
+    <!-- CHAPTER 4: THE STRUGGLING -->
+    <div class="chapter" id="ch4">
+      <div class="chapter-label">Chapter Five</div>
+      <h2 class="chapter-title">The Ones Who <em>Struggled</em></h2>
+
+      <p class="dropcap">Not everyone had a good night. Some companies walked into the earnings theater and delivered performances that sent the audience heading for the exits. The reasons varied — some were macro, some operational, some just bad luck.</p>
+
+      <p><strong>DraftKings</strong> had the most paradoxical report of the night. Their Q4 revenue was up 43% year-over-year. Their EBITDA was four times higher than the prior year. Every metric screamed triumph. And yet — the stock fell 15% after hours. Why? Because when analysts looked at the full-year 2026 guidance, they expected about $7.2 billion in revenue. DraftKings guided to $6.5–6.9 billion. The company was spending aggressively on a new "predictions" business (think: event contracts, like a legal sports prediction market). The future bet was real. But investors were paying today's price for tomorrow's gamble.</p>
+
+      <div class="company-card loss">
+        <div class="card-ticker"><span class="badge">📉</span><span class="symbol">DKNG</span></div>
+        <div class="card-body">
+          <strong>DraftKings</strong>
+          <p>Q4 revenue +43%, EBITDA 4x prior year — and the stock fell 15%. Guidance disappointed because the company is betting big on a new predictions business. Great results, worrying forward bets.</p>
+        </div>
+        <div class="card-stat"><span class="surprise neg">-12.5%</span><br>$0.36 EPS</div>
+      </div>
+
+      <p><strong>Pinterest</strong> was the night's most important warning signal — not for itself, but for the entire digital advertising ecosystem. The company's revenue grew 17%, but management delivered a phrase that made ad-dependent investors nervous everywhere: retail clients are <em>pulling back on ad spending because of tariff costs</em>. If you're a clothing brand or a home goods company and your cost of goods suddenly jumped because of import tariffs, the first thing you cut is your Pinterest ad budget. This wasn't just a Pinterest problem. It was a flare sent up over the entire digital ad market.</p>
+
+      <div class="company-card loss">
+        <div class="card-ticker"><span class="badge">📉</span><span class="symbol">PINS</span></div>
+        <div class="card-body">
+          <strong>Pinterest</strong>
+          <p>Stock -17%. The real story: retail advertisers citing tariffs as reason to cut ad spend. A warning shot across the bow of Meta, Snap, and the entire ad-supported internet.</p>
+        </div>
+        <div class="card-stat"><span class="surprise neg">Inline</span><br>Guide miss</div>
+      </div>
+
+      <p><strong>Wynn Resorts</strong> had a tough night in Macau. Hold percentages — the statistical luck factor of casino games — ran against the house, shrinking margins. Las Vegas showed softening. The stock fell on a miss. Compare this to <strong>Melco Resorts</strong>, which actually doubled analyst expectations with its Macau mass market momentum. Same city, same quarter, completely different outcomes. The difference? Melco is more exposed to mass market gamblers, while Wynn skews toward VIP. And VIP, apparently, had a lucky night in Macau at the casino's expense.</p>
+
+      <p><strong>Bruker</strong> and <strong>Bio-Rad</strong> both missed, representing the ongoing pain in the life science tools sector. Academic labs are underfunded, biopharma companies tightened R&D budgets after the post-COVID boom, and China demand remains soft. The tools that scientists use to do science are in a downcycle — not because science stopped, but because the institutions funding it got cautious.</p>
+
+      <p><strong>Core Natural Resources</strong> and <strong>Warrior Met Coal</strong> both stumbled on weaker metallurgical coal prices. Met coal is used to make steel, and steel demand is tied to construction and manufacturing — neither of which is booming globally right now. When the world builds less, it needs less steel, which means it needs less coal to make that steel.</p>
+
+      <div class="mini-scoreboard">
+        <div class="scoreboard-header"><span>Biggest Misses of the Night</span><span>Surprise %</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker neg">FLO</span><span class="sb-name">Flowers Foods</span><span class="sb-eps neg">-$0.32</span><span class="sb-verdict neg">-313%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker neg">CNR</span><span class="sb-name">Core Natural Resources</span><span class="sb-eps neg">-$1.54</span><span class="sb-verdict neg">-161%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker neg">BTDR</span><span class="sb-name">Bitdeer Technologies</span><span class="sb-eps neg">-$0.31</span><span class="sb-verdict neg">-168%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker neg">GEL</span><span class="sb-name">Genesis Energy</span><span class="sb-eps neg">$0.04</span><span class="sb-verdict neg">-86%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker neg">CALY</span><span class="sb-name">Callaway Golf</span><span class="sb-eps neg">-$0.25</span><span class="sb-verdict neg">-80%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker neg">HCC</span><span class="sb-name">Warrior Met Coal</span><span class="sb-eps neg">$0.44</span><span class="sb-verdict neg">-25%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker neg">WYNN</span><span class="sb-name">Wynn Resorts</span><span class="sb-eps neg">$1.17</span><span class="sb-verdict neg">-21%</span></div>
+        <div class="scoreboard-row"><span class="sb-ticker neg">DKNG</span><span class="sb-name">DraftKings</span><span class="sb-eps neg">$0.36</span><span class="sb-verdict neg">-12%</span></div>
+      </div>
+    </div>
+
+    <div class="chapter-divider">· · ·</div>
+
+    <!-- CHAPTER 5: THE QUIET STEADIES -->
+    <div class="chapter" id="ch5">
+      <div class="chapter-label">Chapter Six</div>
+      <h2 class="chapter-title">The <em>Quiet</em> Steadies</h2>
+
+      <p class="dropcap">Not every company on Thursday night was trying to change the world or confessing a catastrophe. A large swath of corporate America simply did what it always does: showed up, delivered within a few cents of expectations, and went home. These are the companies that don't make headlines — but they are, in many ways, the backbone of the economy.</p>
+
+      <p>The utilities — <strong>American Electric Power</strong>, <strong>Exelon</strong>, <strong>Entergy</strong>, <strong>Fortis</strong>, <strong>Eversource</strong>, and <strong>PG&E</strong> — all reported quietly, with results ranging from slightly better to roughly inline. The interesting subtext was that AI data centers are becoming a genuine demand tailwind for electricity. Every time someone runs a large language model, electrons flow somewhere. Those electrons come from utilities. AEP, in particular, is sitting in the middle of booming data center corridors in Ohio and Texas.</p>
+
+      <div class="highlight-box">
+        <div class="box-label">💡 The Hidden AI Story</div>
+        <p>AI's biggest beneficiaries aren't always the ones in the headlines. Utilities, industrial gas suppliers, cooling equipment makers, and fiber cable companies are all quietly riding the data center buildout. Thursday night's utility reports were Exhibit A.</p>
+      </div>
+
+      <p>The REITs told a similar story of quiet resilience. <strong>Kimco Realty</strong>'s grocery-anchored shopping centers delivered exactly what was expected — people still drive to the grocery store, regardless of what's happening in the economy. <strong>Iron Mountain</strong> — which started life storing paper records in warehouses — beat estimates modestly, underpinned by a growing data center business that now accounts for a significant chunk of its revenue. From paper filing cabinets to AI server racks. That's a journey.</p>
+
+      <p><strong>Enbridge</strong>, the Canadian pipeline giant, put up a record year with $20 billion in annual EBITDA and raised its dividend for the 31st consecutive year. Thirty-one years. Through recessions, commodity crashes, pipeline protests, and a pandemic. The company also quietly disclosed $3 billion in data center-related power infrastructure for companies including Meta. Even pipelines are in the AI business now.</p>
+
+      <p><strong>SPS Commerce</strong>, which runs the EDI network that connects retailers with their suppliers (think: the digital plumbing that tells a warehouse when Walmart needs more paper towels), beat by 13% and reported virtually zero customer churn. Nobody ever wrote a thrilling story about EDI software. But the companies that build essential, invisible infrastructure and charge for it forever are some of the best businesses in existence.</p>
+
+      <p><strong>TransUnion</strong>, <strong>Morningstar</strong>, <strong>CBRE</strong>, <strong>US Foods</strong>, <strong>Ingersoll Rand</strong>, <strong>Lincoln Electric</strong>, and dozens of others added their voices to the chorus of "solid quarter, steady outlook." Not every story needs a dramatic arc. Sometimes reliability is its own form of excellence.</p>
+    </div>
+
+    <div class="chapter-divider">· · ·</div>
+
+    <!-- CHAPTER 6: THE WILD CARDS -->
+    <div class="chapter" id="ch6">
+      <div class="chapter-label">Chapter Seven</div>
+      <h2 class="chapter-title">The Night's <em>Wild Cards</em></h2>
+
+      <p class="dropcap">And then there were the companies that defied easy categorization — the ones whose stories were too strange, too surprising, or too contradictory to fit neatly into "beat" or "miss."</p>
+
+      <p><strong>Vertex Pharmaceuticals</strong> technically missed EPS estimates by 2.3%, and yet nobody in the room was particularly worried. Vertex owns the cystic fibrosis drug market almost entirely — there is no real competition. The miss came because the company is investing heavily in pain drugs, gene therapy for blood disorders, and a diabetes program. It's spending money to build the next Vertex while the current Vertex prints cash. A miss in service of a larger ambition.</p>
+
+      <p><strong>Vale</strong> — the Brazilian iron ore giant — technically reported a loss per share versus an expected profit. But peeling back the layers, the core mining operations were fine. What killed the headline number was a cocktail of one-time charges, legal provisions from the Samarco dam disaster of 2015 (still haunting them, eleven years later), and currency fluctuations. The market shrugged — not with approval, but with the weary familiarity of a Vale shareholder who's been through this before.</p>
+
+      <p><strong>CRISPR Therapeutics</strong> reported a wider-than-expected loss, but their gene-editing therapy CASGEVY — which can functionally cure sickle cell disease — had just launched commercially. The losses were the cost of launching one of the most scientifically remarkable drugs in history. In ten years, if CASGEVY achieves its potential, this quarter's losses will look like seed money.</p>
+
+      <div class="company-card mixed">
+        <div class="card-ticker"><span class="badge">🧬</span><span class="symbol">CRSP</span></div>
+        <div class="card-body">
+          <strong>CRISPR Therapeutics</strong>
+          <p>Missed on EPS. But their approved drug can functionally cure sickle cell disease. Sometimes a "miss" is the cost of a scientific miracle.</p>
+        </div>
+        <div class="card-stat"><span class="surprise neg">-11.7%</span><br>-$1.37 EPS</div>
+      </div>
+
+      <p><strong>10x Genomics</strong> flipped from an expected loss to an actual profit — the definition of a positive surprise — in a sector (life science tools) that had been in the doldrums for over a year. One quarter doesn't make a recovery, but it was the first green shoot in a long winter.</p>
+
+      <p><strong>Flowers Foods</strong> — maker of Nature's Own bread and Tastykakes — reported one of the worst misses of the night, a 313% EPS shortfall driven by impairment charges and the relentless pressure of private label bread eating into branded market share. Somewhere in America, a consumer stood in the bread aisle and chose the store brand. They did it over and over again. And eventually, it showed up in this earnings report.</p>
+
+      <p><strong>Nebius Group</strong> — formerly the international arm of Russian tech giant Yandex, now reborn as a European AI cloud company — burned more cash than expected as it tries to build GPU infrastructure from scratch. The losses were intentional. Whether the intention will pay off is the $24 billion question.</p>
+
+      <div class="pull-quote">
+        <p>"In the bread aisle and in the AI cloud, Thursday night's wild cards reminded us: every earnings number is just a snapshot of a longer story, still being written."</p>
+        <span class="attribution">Somewhere between Flowers Foods and Nebius</span>
+      </div>
+    </div>
+
+    <div class="chapter-divider">· · ·</div>
+
+    <!-- CHAPTER 7: THE VERDICT -->
+    <div class="chapter" id="ch7">
+      <div class="chapter-label">Epilogue</div>
+      <h2 class="chapter-title">The <em>Verdict</em></h2>
+
+      <p class="dropcap">By midnight, the calls had ended. The press releases had been filed. The analysts had updated their models, the trading algorithms had made their first moves, and the CEOs had gone to bed — some sleeping well, others staring at the ceiling.</p>
+
+      <p>What did Thursday night tell us about the world? A few things.</p>
+
+      <p><strong>AI is real, and it's touching everything.</strong> Not just the obvious names — the chip equipment makers, the network builders — but the utilities carrying the electricity, the fiber laser makers cutting the metal for server racks, the REIT storing the data, the injectable drug companies whose components go into biotech processes that now run on AI. The economic tentacles of the AI buildout are longer than most people realize.</p>
+
+      <p><strong>The consumer is bifurcating.</strong> Premium footwear brands (Birkenstock, Crocs) beat. Drive-through coffee (Dutch Bros) soared. Budget bread (Flowers Foods) cratered. The middle is hollowing out — people are either treating themselves to something they love or trading ruthlessly down to the cheapest option. The brands caught in between are in trouble.</p>
+
+      <p><strong>Tariffs are starting to show up in earnings.</strong> Pinterest named them directly. Other consumer-facing companies referenced cost pressure without spelling it out. The tariff effect is still early — more of a ripple than a wave — but Thursday night was one of the first times it showed up broadly across a single set of earnings.</p>
+
+      <p><strong>Old-economy resilience is underappreciated.</strong> Enbridge's 31-year dividend streak. Agnico Eagle's century of gold production experience. Arista's boring but beautiful routing equipment. Lincoln Electric welding the world together. SPS Commerce connecting every retailer to every supplier via software that nobody glamorizes but nobody can live without. Thursday reminded us that the economy is mostly built by companies that never trend on social media.</p>
+
+      <div class="final-scoreboard">
+        <div class="score-grid">
+          <div class="score-cell">
+            <div class="score-number pos">62</div>
+            <div class="score-label">Companies That Beat</div>
+          </div>
+          <div class="score-cell">
+            <div class="score-number neg">28</div>
+            <div class="score-label">Companies That Missed</div>
+          </div>
+          <div class="score-cell">
+            <div class="score-number gold">10</div>
+            <div class="score-label">Blowout Beats (&gt;50%)</div>
+          </div>
+        </div>
+      </div>
+
+      <p>By the time Friday morning came and the CPI print landed — 2.4%, cooler than feared — the market had already absorbed Thursday night's confessions. Some stocks had soared, some had cratered, and most had shrugged and moved on. That's what markets do. They process, they price, and they move to the next thing.</p>
+
+      <p>Next quarter, this whole theater will perform again. Different numbers. Same script. Same stakes.</p>
+
+      <p>Somewhere, a CEO is already preparing their opening remarks.</p>
+    </div>
+
+    <div class="chapter-divider">· · · ❧ · · ·</div>
+
+    <footer class="footnote">
+      All figures from Q4 2025 earnings releases & calls · February 12–13, 2026<br>
+      For general learning purposes only · Not investment advice
+    </footer>
+
+  </article>
+</div>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (window.scrollY / total) * 100;
+    document.getElementById('progress').style.width = progress + '%';
+  });
+
+  // Scroll to chapter
+  function scrollTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Chapter nav highlight
+  const chapters = document.querySelectorAll('.chapter');
+  const btns = document.querySelectorAll('.chapter-btn');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        const idx = ['ch0','ch1','ch2','ch3','ch4','ch5','ch6','ch7'].indexOf(id);
+        btns.forEach(b => b.classList.remove('active'));
+        if (idx >= 0) btns[idx].classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  chapters.forEach(c => observer.observe(c));
+
+  // Fade-in animation
+  const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  chapters.forEach(c => fadeObserver.observe(c));
+</script>
+</body>
+</html>
