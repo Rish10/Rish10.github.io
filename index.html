@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>☕ The Morning Brief</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F8F4ED;
+    --paper2: #F2EDE3;
+    --ink: #1C1510;
+    --ink2: #2E2418;
+    --muted: #7A6A58;
+    --rule: #C8B89A;
+    --rule2: #E2D5C0;
+    --accent: #C0392B;
+    --gold: #A0760A;
+    --gold2: #C49B1A;
+    --green: #1E6B3C;
+    --blue: #1A3A5C;
+    --highlight: #FDF6E3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    min-height: 100vh;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── BROADSHEET HEADER ── */
+  .broadsheet-header {
+    border-bottom: 3px double var(--rule);
+    padding: 2rem 0 0;
+    background: var(--paper);
+  }
+
+  .header-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem 0.6rem;
+    border-bottom: 1px solid var(--rule2);
+    margin-bottom: 0.6rem;
+  }
+
+  .header-meta-left {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .header-meta-right {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .header-flag {
+    text-align: center;
+    padding: 0.5rem 2rem 1.5rem;
+  }
+
+  .flag-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .flag-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .flag-title .the { font-style: italic; font-weight: 400; }
+  .flag-title .brief { color: var(--accent); }
+
+  .flag-rule {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+    margin: 0.75rem 0 0.5rem;
+  }
+
+  .flag-rule::before,
+  .flag-rule::after {
+    content: '';
+    flex: 1;
+    max-width: 300px;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .flag-rule span {
+    color: var(--rule);
+    font-size: 1rem;
+  }
+
+  .flag-tagline {
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── NAV BAR ── */
+  .nav-bar {
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-bar::-webkit-scrollbar { display: none; }
+
+  .nav-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.25rem;
+    color: var(--muted);
+    cursor: pointer;
+    border-right: 1px solid var(--rule2);
+    white-space: nowrap;
+    transition: all 0.15s;
+    background: transparent;
+    border-top: none;
+    border-bottom: none;
+    border-left: none;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .nav-item:first-child { border-left: 1px solid var(--rule2); }
+  .nav-item:hover, .nav-item.active { background: var(--ink); color: var(--paper); }
+
+  /* ── READING PROGRESS ── */
+  .reading-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    z-index: 200;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 2rem;
+  }
+
+  /* ── STATS RIBBON ── */
+  .stats-ribbon {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    padding: 1.25rem 2rem;
+    border: 1px solid var(--rule2);
+    background: var(--paper2);
+    margin-bottom: 2rem;
+    border-radius: 2px;
+  }
+
+  .stat-item { text-align: center; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1;
+    display: block;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-top: 0.2rem;
+  }
+
+  .stat-divider {
+    width: 1px;
+    background: var(--rule2);
+    align-self: stretch;
+  }
+
+  /* ── SEARCH ── */
+  .search-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    align-items: center;
+  }
+
+  .search-input {
+    flex: 1;
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 0.6rem 1rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-input:focus { border-color: var(--ink); }
+  .search-input::placeholder { color: var(--rule); font-style: italic; }
+
+  .filter-pills {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--rule);
+    border-radius: 100px;
+    cursor: pointer;
+    color: var(--muted);
+    background: transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .pill:hover, .pill.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .pill.style-magazine.active { background: var(--gold); border-color: var(--gold); color: white; }
+  .pill.style-thriller.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .pill.style-comedy.active { background: var(--green); border-color: var(--green); color: white; }
+  .pill.style-sports.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule2);
+  }
+
+  /* ── FEATURED EDITION (Latest) ── */
+  .featured-edition {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 3px double var(--rule);
+  }
+
+  .featured-main {}
+
+  .featured-kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .featured-kicker .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    animation: blink 2s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .featured-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.75rem, 3.5vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+    color: var(--ink);
+  }
+
+  .featured-title em { font-style: italic; color: var(--accent); }
+
+  .featured-deck {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-weight: 300;
+  }
+
+  .featured-byline {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+  }
+
+  .read-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.65rem 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.15s;
+  }
+
+  .read-btn:hover { background: var(--accent); }
+
+  /* FEATURED SIDEBAR */
+  .featured-sidebar {
+    border-left: 1px solid var(--rule2);
+    padding-left: 2rem;
+  }
+
+  .sidebar-block {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--rule2);
+  }
+
+  .sidebar-block:last-child { border-bottom: none; margin-bottom: 0; }
+
+  .sidebar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .hero-villain-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .hv-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .hv-badge {
+    font-size: 0.9rem;
+    width: 20px;
+    text-align: center;
+  }
+
+  .hv-name { color: var(--ink); font-weight: 500; }
+  .hv-sub { font-size: 0.75rem; color: var(--muted); }
+
+  .companies-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .co-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    padding: 0.15rem 0.45rem;
+    border: 1px solid var(--rule2);
+    border-radius: 2px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+
+  .co-tag:hover { border-color: var(--ink); color: var(--ink); }
+
+  .investor-card {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1rem;
+    border-radius: 2px;
+  }
+
+  .inv-card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.4);
+    margin-bottom: 0.3rem;
+  }
+
+  .inv-card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold2);
+    margin-bottom: 0.1rem;
+  }
+
+  .inv-card-years {
+    font-size: 0.72rem;
+    color: rgba(245,240,232,0.45);
+    margin-bottom: 0.6rem;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .inv-card-quote {
+    font-style: italic;
+    font-size: 0.78rem;
+    color: rgba(245,240,232,0.7);
+    line-height: 1.55;
+    border-left: 2px solid var(--gold2);
+    padding-left: 0.6rem;
+  }
+
+  /* ── EDITION GRID ── */
+  .edition-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .edition-card {
+    background: white;
+    border: 1px solid var(--rule2);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .edition-card:hover {
+    border-color: var(--rule);
+    box-shadow: 4px 4px 0 var(--rule2);
+    transform: translate(-2px, -2px);
+  }
+
+  .ec-top {
+    padding: 1.25rem 1.25rem 1rem;
+    flex: 1;
+    border-bottom: 1px solid var(--rule2);
+  }
+
+  .ec-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+  }
+
+  .ec-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+
+  .ec-style {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+
+  .s-magazine { background: #FEF3C7; color: #92400E; }
+  .s-thriller { background: #FEE2E2; color: #991B1B; }
+  .s-comedy { background: #D1FAE5; color: #065F46; }
+  .s-sports { background: #DBEAFE; color: #1E40AF; }
+  .s-surprise { background: #EDE9FE; color: #5B21B6; }
+
+  .ec-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0.4rem;
+    color: var(--ink);
+  }
+
+  .ec-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .ec-theme {
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .ec-bottom {
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--paper2);
+  }
+
+  .ec-hv {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .ec-hero { color: var(--green); font-family: 'DM Mono', monospace; font-size: 0.65rem; }
+  .ec-villain { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 0.65rem; }
+
+  .ec-investor {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  /* ── COMING SOON ── */
+  .coming-soon {
+    border: 1px dashed var(--rule);
+    padding: 2rem;
+    text-align: center;
+    background: transparent;
+    margin-bottom: 2rem;
+  }
+
+  .cs-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .cs-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--rule);
+  }
+
+  /* ── HOW TO ADD AN EDITION ── */
+  .how-to-add {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2rem 2.5rem;
+    margin: 2.5rem 0;
+  }
+
+  .hta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hta-title span { color: var(--gold2); }
+
+  .hta-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .hta-step {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .hta-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .hta-text { font-size: 0.85rem; color: rgba(245,240,232,0.75); line-height: 1.5; }
+  .hta-text code {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    background: rgba(255,255,255,0.1);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    color: var(--gold2);
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 3px double var(--rule);
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-msg {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--muted);
+    font-style: italic;
+    border: 1px dashed var(--rule2);
+  }
+
+  /* ── YEAR DIVIDER ── */
+  .year-divider {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--rule2);
+    text-align: center;
+    line-height: 1;
+    margin: 2rem 0 1.5rem;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @media (max-width: 760px) {
+    .featured-edition { grid-template-columns: 1fr; }
+    .featured-sidebar { border-left: none; border-top: 1px solid var(--rule2); padding-left: 0; padding-top: 1.5rem; }
+    .hta-steps { grid-template-columns: 1fr; }
+    .stats-ribbon { gap: 1.5rem; flex-wrap: wrap; }
+    .footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    .edition-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="reading-progress" id="readingProgress"></div>
+
+<!-- ════════════════════════════════════════
+     BROADSHEET HEADER
+════════════════════════════════════════ -->
+<header class="broadsheet-header">
+  <div class="header-meta">
+    <div class="header-meta-left" id="todayDate">Sunday, February 15, 2026</div>
+    <div class="header-meta-right">
+      <span>☕ Daily · Weekdays Only</span>
+      <span>Vol. I</span>
+      <span id="editionCount">1 Edition Published</span>
+    </div>
+  </div>
+
+  <div class="header-flag">
+    <div class="flag-eyebrow">Your Personal Finance Education Journal</div>
+    <div class="flag-title">
+      <span class="the">The </span>Morning <span class="brief">Brief</span>
+    </div>
+    <div class="flag-rule"><span>❧</span></div>
+    <div class="flag-tagline">Earnings stories, legendary investors &amp; economic intuition — with your morning coffee.</div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════
+     NAV
+════════════════════════════════════════ -->
+<nav class="nav-bar">
+  <button class="nav-item active" onclick="filterEditions('all', this)">All Editions</button>
+  <button class="nav-item" onclick="filterEditions('Magazine', this)">📰 Magazine</button>
+  <button class="nav-item" onclick="filterEditions('Thriller', this)">🎬 Thriller</button>
+  <button class="nav-item" onclick="filterEditions('Comedy', this)">😂 Comedy</button>
+  <button class="nav-item" onclick="filterEditions('Sports', this)">🏟️ Sports</button>
+  <button class="nav-item" onclick="filterEditions('Surprise', this)">🎲 Surprise</button>
+  <button class="nav-item" onclick="scrollToHowTo()">✍️ How to Add</button>
+</nav>
+
+<!-- ════════════════════════════════════════
+     MAIN
+════════════════════════════════════════ -->
+<div class="main-container">
+
+  <!-- STATS -->
+  <div class="stats-ribbon" id="statsRibbon">
+    <div class="stat-item">
+      <span class="stat-num" id="s-editions">1</span>
+      <span class="stat-label">Editions</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <span class="stat-num" id="s-companies">100</span>
+      <span class="stat-label">Companies Tracked</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <span class="stat-num" id="s-investors">0</span>
+      <span class="stat-label">Investors Studied</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <span class="stat-num" id="s-streak">1</span>
+      <span class="stat-label">Day Streak 🔥</span>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <input type="text" class="search-input" id="searchInput"
+      placeholder="Search by company (ANET), investor, theme, date..."
+      oninput="handleSearch(this.value)">
+  </div>
+
+  <div style="margin-bottom:1.5rem;display:flex;gap:0.4rem;flex-wrap:wrap" id="filterPills">
+    <span class="pill active" onclick="filterEditions('all', this)">All</span>
+    <span class="pill style-magazine" onclick="filterEditions('Magazine', this)">🎭 Magazine</span>
+    <span class="pill style-thriller" onclick="filterEditions('Thriller', this)">🎬 Thriller</span>
+    <span class="pill style-comedy" onclick="filterEditions('Comedy', this)">😂 Comedy</span>
+    <span class="pill style-sports" onclick="filterEditions('Sports', this)">🏟️ Sports</span>
+    <span class="pill style-surprise" onclick="filterEditions('Surprise', this)">🎲 Surprise</span>
+  </div>
+
+  <!-- ══ FEATURED (Latest Edition) ══ -->
+  <div id="featuredSection"></div>
+
+  <!-- ══ ALL EDITIONS ══ -->
+  <div class="section-label" id="archiveLabel">Archive</div>
+  <div class="edition-grid" id="editionGrid"></div>
+  <div class="empty-msg" id="emptyMsg" style="display:none">No editions match your search.</div>
+
+  <!-- ══ COMING SOON ══ -->
+  <div class="section-label">Coming Up</div>
+  <div class="coming-soon">
+    <div class="cs-title">Edition #1 — First Full Morning Brief</div>
+    <div class="cs-date">Tuesday, February 17, 2026 · Q4 2025 Earnings · Benjamin Graham Week</div>
+  </div>
+
+  <!-- ══ HOW TO ADD AN EDITION ══ -->
+  <div class="how-to-add" id="howToAdd">
+    <div class="hta-title">✍️ How to Add a New Edition <span>— Takes 2 minutes</span></div>
+    <div class="hta-steps">
+      <div class="hta-step">
+        <div class="hta-num">1</div>
+        <div class="hta-text">Save your new HTML file to the correct folder:<br><code>editions/2026/02-february/edition-001-feb17.html</code></div>
+      </div>
+      <div class="hta-step">
+        <div class="hta-num">2</div>
+        <div class="hta-text">Open <code>index.html</code> and find the <code>EDITIONS DATA</code> section near the top of the script</div>
+      </div>
+      <div class="hta-step">
+        <div class="hta-num">3</div>
+        <div class="hta-text">Copy the template entry and fill in: date, title, style, hero, villain, companies, theme, investor, and the file path</div>
+      </div>
+      <div class="hta-step">
+        <div class="hta-num">4</div>
+        <div class="hta-text">Save <code>index.html</code> and push both files to GitHub. Done — your archive updates instantly.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div>☕ The Morning Brief · Est. February 2026</div>
+  <div>For general learning only · Not investment advice</div>
+  <div id="footerCount">1 Edition in Archive</div>
+</footer>
+
+<!-- ════════════════════════════════════════
+     DATA — ADD NEW EDITIONS HERE
+     Copy one block and fill in the fields.
+════════════════════════════════════════ -->
+<script>
+
+// ══════════════════════════════════════════════════════════════════
+//  📰 EDITIONS DATA
+//  To add a new edition, copy the block below and fill it in.
+//  Add newest editions at the TOP of the array.
+// ══════════════════════════════════════════════════════════════════
+
+const EDITIONS = [
+
+  // ── TEMPLATE (copy this for each new edition) ──────────────────
+  // {
+  //   num: 2,
+  //   date: "2026-02-18",                          // YYYY-MM-DD
+  //   title: "Your Edition Title Here",
+  //   style: "Thriller",                           // Magazine / Thriller / Comedy / Sports / Surprise
+  //   deck: "One sentence teaser for the edition.",
+  //   hero: "TICKER — Company Name",
+  //   villain: "TICKER — Company Name",
+  //   investor: "Warren Buffett",
+  //   theme: "One sentence on what today said about the economy.",
+  //   companies: ["TICK1","TICK2","TICK3"],         // Array of tickers
+  //   path: "editions/2026/02-february/edition-002-feb18.html"
+  // },
+
+  // ── EDITION #0 — The Origin Story ─────────────────────────────
+  {
+    num: 0,
+    date: "2026-02-12",
+    title: "Thursday Night in Corporate America",
+    style: "Magazine",
+    deck: "One hundred companies walked into their quarterly reckoning. Some soared. Some stumbled. A few shocked even themselves.",
+    hero: "ANET — Arista Networks",
+    villain: "PINS — Pinterest",
+    investor: "Coming Tuesday: Benjamin Graham",
+    theme: "AI infrastructure is touching every sector of the economy — utilities, REITs, and industrials, not just tech.",
+    companies: ["AMAT","ANET","BUD","VRTX","AEM","HWM","ABNB","VALE","AEP","ZTS","PSA","EXC","COIN","CBRE","IR","IRM","QSR","FTS","ES","DXCM","EXPE","NBIS","USFD","RIVN","CHKP","WST","TWLO","TOST","H","KIM","TRU","ZBRA","ROKU","WYNN","DKNG","PINS","BAX","CART","KNSL","AL","MORN","IPGP","FROG","CROX","BROS","DBD","SPHR","PBF","LNC","BIRK","MHK","CRSP","TXG","FLO","GEL","MLCO","CNR","HCC","CALY","SLVM","BTDR"],
+    path: "editions/2026/02-february/earning_story.html"
+  },
+
+];
+
+// ══════════════════════════════════════════════════════════════════
+//  END OF DATA SECTION — don't edit below unless you know JS
+// ══════════════════════════════════════════════════════════════════
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function formatDateLong(str) {
+  const d = new Date(str + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+}
+
+function formatDateShort(str) {
+  const d = new Date(str + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+function styleClass(style) {
+  const map = { Magazine:'s-magazine', Thriller:'s-thriller', Comedy:'s-comedy', Sports:'s-sports', Surprise:'s-surprise' };
+  return map[style] || 's-magazine';
+}
+
+function styleEmoji(style) {
+  const map = { Magazine:'🎭', Thriller:'🎬', Comedy:'😂', Sports:'🏟️', Surprise:'🎲' };
+  return map[style] || '🎭';
+}
+
+// ── STATS ─────────────────────────────────────────────────────────
+function updateStats() {
+  const allCompanies = new Set();
+  const allInvestors = new Set();
+  EDITIONS.forEach(e => {
+    (e.companies||[]).forEach(c => allCompanies.add(c));
+    if (e.investor && !e.investor.startsWith('Coming')) allInvestors.add(e.investor);
+  });
+  document.getElementById('s-editions').textContent = EDITIONS.length;
+  document.getElementById('s-companies').textContent = allCompanies.size;
+  document.getElementById('s-investors').textContent = allInvestors.size;
+  document.getElementById('s-streak').textContent = EDITIONS.length;
+  document.getElementById('editionCount').textContent = EDITIONS.length + ' Edition' + (EDITIONS.length !== 1 ? 's' : '') + ' Published';
+  document.getElementById('footerCount').textContent = EDITIONS.length + ' Edition' + (EDITIONS.length !== 1 ? 's' : '') + ' in Archive';
+}
+
+// ── FEATURED ──────────────────────────────────────────────────────
+function renderFeatured() {
+  const e = EDITIONS[0];
+  if (!e) return;
+  const section = document.getElementById('featuredSection');
+
+  const companiesHtml = (e.companies||[]).slice(0,20).map(c =>
+    `<span class="co-tag" onclick="searchTicker('${c}')">${c}</span>`
+  ).join('') + (e.companies.length > 20 ? `<span class="co-tag">+${e.companies.length-20}</span>` : '');
+
+  section.innerHTML = `
+    <div class="section-label">Latest Edition</div>
+    <div class="featured-edition">
+      <div class="featured-main">
+        <div class="featured-kicker">
+          <span class="live-dot"></span>
+          Edition #${e.num} · ${styleEmoji(e.style)} ${e.style}
+        </div>
+        <h1 class="featured-title">${e.title}</h1>
+        <p class="featured-deck">${e.deck}</p>
+        <div class="featured-byline">Published ${formatDateLong(e.date)}</div>
+        <a class="read-btn" href="${e.path}">Read This Edition →</a>
+      </div>
+      <div class="featured-sidebar">
+        <div class="sidebar-block">
+          <div class="sidebar-label">🏆 Hero &amp; 📉 Villain</div>
+          <div class="hero-villain-pair">
+            <div class="hv-item">
+              <span class="hv-badge">🏆</span>
+              <div>
+                <div class="hv-name">${e.hero}</div>
+              </div>
+            </div>
+            <div class="hv-item">
+              <span class="hv-badge">📉</span>
+              <div>
+                <div class="hv-name">${e.villain}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-block">
+          <div class="sidebar-label">🌍 Thematic Takeaway</div>
+          <div style="font-size:0.85rem;font-style:italic;color:var(--muted);line-height:1.55">${e.theme}</div>
+        </div>
+        <div class="sidebar-block">
+          <div class="sidebar-label">🏷️ Companies Covered</div>
+          <div class="companies-cloud">${companiesHtml}</div>
+        </div>
+        <div class="sidebar-block" style="border-bottom:none;margin-bottom:0;padding-bottom:0">
+          <div class="investor-card">
+            <div class="inv-card-label">📚 Investor of the Week</div>
+            <div class="inv-card-name">${e.investor.replace('Coming Tuesday: ','')}</div>
+            <div class="inv-card-years">The Father of Value Investing</div>
+            <div class="inv-card-quote">"The stock market is a voting machine in the short run and a weighing machine in the long run."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ── GRID ──────────────────────────────────────────────────────────
+function renderGrid() {
+  const grid = document.getElementById('editionGrid');
+  const empty = document.getElementById('emptyMsg');
+
+  let data = EDITIONS.slice(1); // skip featured (first)
+
+  if (currentFilter !== 'all') {
+    data = data.filter(e => e.style === currentFilter);
+  }
+
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    data = data.filter(e =>
+      (e.title||'').toLowerCase().includes(q) ||
+      (e.hero||'').toLowerCase().includes(q) ||
+      (e.villain||'').toLowerCase().includes(q) ||
+      (e.investor||'').toLowerCase().includes(q) ||
+      (e.theme||'').toLowerCase().includes(q) ||
+      (e.date||'').includes(q) ||
+      (e.companies||[]).some(c => c.toLowerCase().includes(q))
+    );
+  }
+
+  if (!data.length) {
+    grid.innerHTML = '';
+    empty.style.display = currentSearch ? 'block' : 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  grid.innerHTML = data.map(e => `
+    <a class="edition-card" href="${e.path}">
+      <div class="ec-top">
+        <div class="ec-meta">
+          <span class="ec-num">Edition #${e.num}</span>
+          <span class="ec-style ${styleClass(e.style)}">${styleEmoji(e.style)} ${e.style}</span>
+        </div>
+        <div class="ec-title">${e.title}</div>
+        <div class="ec-date">${formatDateShort(e.date)}</div>
+        <div class="ec-theme">${e.theme}</div>
+      </div>
+      <div class="ec-bottom">
+        <div class="ec-hv">
+          <span class="ec-hero">🏆 ${(e.hero||'').split('—')[0].trim()}</span>
+          <span class="ec-villain">📉 ${(e.villain||'').split('—')[0].trim()}</span>
+        </div>
+        <div class="ec-investor">📚 ${(e.investor||'').replace('Coming Tuesday: ','')}</div>
+      </div>
+    </a>
+  `).join('');
+}
+
+// ── FILTER / SEARCH ───────────────────────────────────────────────
+function filterEditions(style, el) {
+  currentFilter = style;
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+
+  // Update pills
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  renderGrid();
+}
+
+function handleSearch(q) {
+  currentSearch = q;
+  renderGrid();
+
+  // Also filter featured if it matches
+  if (q) {
+    const e = EDITIONS[0];
+    const matches = e && (
+      (e.title||'').toLowerCase().includes(q.toLowerCase()) ||
+      (e.companies||[]).some(c => c.toLowerCase().includes(q.toLowerCase()))
+    );
+    document.getElementById('featuredSection').style.opacity = matches || !q ? '1' : '0.3';
+  } else {
+    document.getElementById('featuredSection').style.opacity = '1';
+  }
+}
+
+function searchTicker(ticker) {
+  const input = document.getElementById('searchInput');
+  input.value = ticker;
+  handleSearch(ticker);
+  input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function scrollToHowTo() {
+  document.getElementById('howToAdd').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── DATE ──────────────────────────────────────────────────────────
+document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', {
+  weekday:'long', year:'numeric', month:'long', day:'numeric'
+});
+
+// ── READING PROGRESS ─────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('readingProgress').style.width = (window.scrollY / total * 100) + '%';
+});
+
+// ── INIT ──────────────────────────────────────────────────────────
+updateStats();
+renderFeatured();
+renderGrid();
+
+</script>
+</body>
+</html>
