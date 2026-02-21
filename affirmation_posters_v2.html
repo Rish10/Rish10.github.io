@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rishabh's Daily Affirmations</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Bebas+Neue&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #080808; font-family: 'Cormorant Garamond', serif; padding: 40px 20px; }
+
+  .page-header { text-align: center; margin-bottom: 60px; }
+  h1.page-title { font-family: 'Playfair Display', serif; color: #f0e6d3; font-size: 3rem; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 10px; }
+  .subtitle { color: #a0856b; font-family: 'Dancing Script', cursive; font-size: 1.5rem; margin-bottom: 16px; }
+  .header-line { width: 120px; height: 1px; background: linear-gradient(90deg, transparent, #c9963a, transparent); margin: 0 auto; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 28px; max-width: 1400px; margin: 0 auto; }
+
+  .poster { border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; min-height: 420px; transition: transform 0.4s ease, box-shadow 0.4s ease; }
+  .poster:hover { transform: translateY(-8px); box-shadow: 0 40px 100px rgba(0,0,0,0.7); }
+
+  .visual-panel { height: 185px; flex-shrink: 0; position: relative; overflow: hidden; }
+  .visual-panel svg { width: 100%; height: 100%; display: block; }
+
+  .text-panel { flex: 1; padding: 28px 32px 32px; display: flex; flex-direction: column; justify-content: center; }
+
+  .category { font-family: 'Bebas Neue', sans-serif; font-size: 0.72rem; letter-spacing: 0.45em; text-transform: uppercase; margin-bottom: 14px; }
+  .deco-line { width: 40px; height: 2px; margin-bottom: 16px; }
+  .quote { font-family: 'Playfair Display', serif; font-size: 1.28rem; line-height: 1.6; font-weight: 700; margin-bottom: 14px; }
+  .sub { font-size: 0.88rem; font-style: italic; opacity: 0.6; letter-spacing: 0.03em; }
+
+  .wide { grid-column: 1 / -1; flex-direction: row; min-height: 280px; }
+  .wide .visual-panel { width: 310px; height: auto; flex-shrink: 0; }
+  .wide .text-panel { padding: 45px 55px; }
+  .wide .quote { font-size: 1.85rem; }
+
+  /* THEMES */
+  .theme-gold  { background:#0f0a02; border:1px solid #4a3210; }
+  .theme-gold  .visual-panel { background: linear-gradient(145deg,#1a1005,#2d1a06); }
+  .theme-gold  .text-panel   { background: #0f0a02; }
+  .theme-gold  .category     { color:#c9963a; }
+  .theme-gold  .deco-line    { background:linear-gradient(90deg,#c9963a,transparent); }
+  .theme-gold  .quote        { color:#f0d99a; }
+  .theme-gold  .sub          { color:#c9963a; }
+
+  .theme-blue  { background:#02080f; border:1px solid #0e2640; }
+  .theme-blue  .visual-panel { background:linear-gradient(145deg,#030c1a,#071828); }
+  .theme-blue  .text-panel   { background:#02080f; }
+  .theme-blue  .category     { color:#4a9fd4; }
+  .theme-blue  .deco-line    { background:linear-gradient(90deg,#4a9fd4,transparent); }
+  .theme-blue  .quote        { color:#c8dff5; }
+  .theme-blue  .sub          { color:#4a9fd4; }
+
+  .theme-green { background:#020f05; border:1px solid #0e3018; }
+  .theme-green .visual-panel { background:linear-gradient(145deg,#040f08,#081a0e); }
+  .theme-green .text-panel   { background:#020f05; }
+  .theme-green .category     { color:#3ab86a; }
+  .theme-green .deco-line    { background:linear-gradient(90deg,#3ab86a,transparent); }
+  .theme-green .quote        { color:#b8e8c8; }
+  .theme-green .sub          { color:#3ab86a; }
+
+  .theme-crimson { background:#0f0205; border:1px solid #3a0a15; }
+  .theme-crimson .visual-panel { background:linear-gradient(145deg,#130308,#200510); }
+  .theme-crimson .text-panel   { background:#0f0205; }
+  .theme-crimson .category     { color:#d4526a; }
+  .theme-crimson .deco-line    { background:linear-gradient(90deg,#d4526a,transparent); }
+  .theme-crimson .quote        { color:#f5c8d5; }
+  .theme-crimson .sub          { color:#d4526a; }
+
+  .theme-silver { background:#080808; border:1px solid #303030; }
+  .theme-silver .visual-panel { background:linear-gradient(145deg,#0d0d0d,#1a1a1a); }
+  .theme-silver .text-panel   { background:#080808; }
+  .theme-silver .category     { color:#aaaaaa; }
+  .theme-silver .deco-line    { background:linear-gradient(90deg,#aaaaaa,transparent); }
+  .theme-silver .quote        { color:#e8e8e8; }
+  .theme-silver .sub          { color:#aaaaaa; }
+
+  .theme-violet { background:#050210; border:1px solid #1e0a40; }
+  .theme-violet .visual-panel { background:linear-gradient(145deg,#0a0515,#120a22); }
+  .theme-violet .text-panel   { background:#050210; }
+  .theme-violet .category     { color:#9a6ad4; }
+  .theme-violet .deco-line    { background:linear-gradient(90deg,#9a6ad4,transparent); }
+  .theme-violet .quote        { color:#d5c8f5; }
+  .theme-violet .sub          { color:#9a6ad4; }
+
+  .theme-copper { background:#0c0602; border:1px solid #5a2e0a; }
+  .theme-copper .visual-panel { background:linear-gradient(145deg,#120a05,#1f1108); }
+  .theme-copper .text-panel   { background:#0c0602; }
+  .theme-copper .category     { color:#e0823a; }
+  .theme-copper .deco-line    { background:linear-gradient(90deg,#e0823a,transparent); }
+  .theme-copper .quote        { color:#f0c89a; }
+  .theme-copper .sub          { color:#e0823a; }
+
+  .page-footer { text-align:center; margin-top:60px; color:#2a2a2a; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.95rem; letter-spacing:0.1em; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1 class="page-title">Daily Affirmations</h1>
+  <p class="subtitle">Rishabh Pincha — Morning &amp; Evening Practice</p>
+  <div class="header-line"></div>
+</div>
+
+<div class="grid">
+
+  <!-- WIDE: THE FOUNDATION -->
+  <div class="poster theme-gold wide">
+    <div class="visual-panel">
+      <svg viewBox="0 0 310 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <radialGradient id="sg" cx="50%" cy="65%" r="55%"><stop offset="0%" stop-color="#f0a030" stop-opacity="0.4"/><stop offset="100%" stop-color="#1a1005" stop-opacity="0"/></radialGradient>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#060401"/><stop offset="100%" stop-color="#2d1a06"/></linearGradient>
+        </defs>
+        <rect width="310" height="280" fill="url(#sky)"/>
+        <circle cx="155" cy="175" r="110" fill="url(#sg)"/>
+        <circle cx="155" cy="175" r="60" fill="none" stroke="#c9963a" stroke-width="0.8" opacity="0.5"/>
+        <circle cx="155" cy="175" r="38" fill="none" stroke="#f0d99a" stroke-width="0.5" opacity="0.3"/>
+        <circle cx="155" cy="175" r="18" fill="#c9963a" opacity="0.65"/>
+        <line x1="0" y1="175" x2="310" y2="175" stroke="#c9963a" stroke-width="0.5" opacity="0.35"/>
+        <!-- Sun rays -->
+        <line x1="155" y1="155" x2="155" y2="65" stroke="#f0d99a" stroke-width="0.5" opacity="0.2"/>
+        <line x1="136" y1="160" x2="60" y2="100" stroke="#f0d99a" stroke-width="0.5" opacity="0.2"/>
+        <line x1="174" y1="160" x2="250" y2="100" stroke="#f0d99a" stroke-width="0.5" opacity="0.2"/>
+        <line x1="126" y1="170" x2="20" y2="145" stroke="#f0d99a" stroke-width="0.4" opacity="0.15"/>
+        <line x1="184" y1="170" x2="290" y2="145" stroke="#f0d99a" stroke-width="0.4" opacity="0.15"/>
+        <!-- Mountains -->
+        <polygon points="0,280 75,190 155,240 235,175 310,210 310,280" fill="#1a0f04" opacity="0.9"/>
+        <polygon points="0,280 55,210 95,228 148,195 195,218 250,188 310,205 310,280" fill="#0f0a02"/>
+        <!-- Stars -->
+        <circle cx="35" cy="45" r="1" fill="#f0d99a" opacity="0.7"/><circle cx="85" cy="25" r="1.5" fill="#f0d99a" opacity="0.5"/><circle cx="195" cy="40" r="1" fill="#f0d99a" opacity="0.7"/><circle cx="265" cy="20" r="1" fill="#f0d99a" opacity="0.4"/><circle cx="125" cy="55" r="0.8" fill="#f0d99a" opacity="0.5"/>
+        <text x="155" y="92" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#c9963a" opacity="0.45" letter-spacing="6">THE FOUNDATION</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Master Affirmation</div>
+      <div class="deco-line"></div>
+      <div class="quote">I am responsible for my life. I have the power to create it exactly as I choose.</div>
+      <div class="sub">Repeat this first. Every single morning. Without exception.</div>
+    </div>
+  </div>
+
+  <!-- IDENTITY -->
+  <div class="poster theme-gold">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#1a1005"/>
+        <defs><radialGradient id="cg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#c9963a" stop-opacity="0.2"/><stop offset="100%" stop-color="#1a1005" stop-opacity="0"/></radialGradient></defs>
+        <ellipse cx="200" cy="92" rx="100" ry="85" fill="url(#cg)"/>
+        <!-- Crown -->
+        <g transform="translate(200,95)">
+          <polygon points="-65,38 -65,-12 -44,-44 -22,-12 0,-55 22,-12 44,-44 65,-12 65,38" fill="none" stroke="#c9963a" stroke-width="1.5" opacity="0.7"/>
+          <polygon points="-60,36 -60,-10 -40,-40 -20,-10 0,-50 20,-10 40,-40 60,-10 60,36" fill="#c9963a" opacity="0.05"/>
+          <circle cx="-44" cy="-42" r="4" fill="#f0d99a" opacity="0.65"/>
+          <circle cx="0" cy="-53" r="5.5" fill="#f0d99a" opacity="0.85"/>
+          <circle cx="44" cy="-42" r="4" fill="#f0d99a" opacity="0.65"/>
+          <line x1="-65" y1="38" x2="65" y2="38" stroke="#c9963a" stroke-width="1.5" opacity="0.7"/>
+        </g>
+        <text x="40" y="30" font-family="serif" font-size="18" fill="#c9963a" opacity="0.2">✦</text>
+        <text x="355" y="170" font-family="serif" font-size="18" fill="#c9963a" opacity="0.2">✦</text>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#c9963a" opacity="0.4" letter-spacing="5">IDENTITY</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Identity</div><div class="deco-line"></div>
+      <div class="quote">I am enough, exactly as I am — and I am becoming more every single day.</div>
+      <div class="sub">You were born worthy. You are royalty.</div>
+    </div>
+  </div>
+
+  <!-- THINK BIG -->
+  <div class="poster theme-copper">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#120a05"/>
+        <defs><radialGradient id="bg2" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#e0823a" stop-opacity="0.2"/><stop offset="100%" stop-color="#120a05" stop-opacity="0"/></radialGradient></defs>
+        <ellipse cx="200" cy="92" rx="100" ry="85" fill="url(#bg2)"/>
+        <!-- Brain outline abstract -->
+        <g transform="translate(200,92)" fill="none" stroke="#e0823a">
+          <ellipse rx="72" ry="62" stroke-width="0.9" opacity="0.5"/>
+          <ellipse rx="52" ry="45" stroke-width="0.6" opacity="0.35"/>
+          <path d="M-72,0 Q-38,-32 0,-12 Q38,-32 72,0" stroke-width="1" opacity="0.55"/>
+          <path d="M-66,22 Q-30,2 0,18 Q30,2 66,22" stroke-width="0.8" opacity="0.4"/>
+          <path d="M-56,-28 Q-22,-50 0,-34 Q22,-50 56,-28" stroke-width="0.8" opacity="0.4"/>
+        </g>
+        <!-- Expanding rings -->
+        <circle cx="200" cy="92" r="88" fill="none" stroke="#e0823a" stroke-width="0.4" opacity="0.2"/>
+        <circle cx="200" cy="92" r="115" fill="none" stroke="#e0823a" stroke-width="0.3" opacity="0.12"/>
+        <circle cx="200" cy="92" r="148" fill="none" stroke="#e0823a" stroke-width="0.2" opacity="0.08"/>
+        <text x="200" y="98" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="26" fill="#e0823a" opacity="0.12" letter-spacing="6">THINK BIG</text>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#e0823a" opacity="0.4" letter-spacing="5">RISHABH PINCHA</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Rishabh's Creed</div><div class="deco-line"></div>
+      <div class="quote">I am a big thinker. I think big about everyone and everything. Nothing is too large for me.</div>
+      <div class="sub">The biggest thinkers build the biggest empires.</div>
+    </div>
+  </div>
+
+  <!-- MINDSET / CONSTELLATION -->
+  <div class="poster theme-blue">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#030c1a"/>
+        <!-- Stars -->
+        <circle cx="80" cy="40" r="2" fill="#4a9fd4" opacity="0.85"/><circle cx="155" cy="22" r="1.5" fill="#c8dff5" opacity="0.6"/><circle cx="225" cy="52" r="2.5" fill="#4a9fd4" opacity="0.95"/><circle cx="305" cy="28" r="1.5" fill="#c8dff5" opacity="0.55"/><circle cx="365" cy="68" r="2" fill="#4a9fd4" opacity="0.75"/><circle cx="130" cy="105" r="1.5" fill="#c8dff5" opacity="0.6"/><circle cx="265" cy="115" r="2" fill="#4a9fd4" opacity="0.85"/><circle cx="48" cy="135" r="1.5" fill="#c8dff5" opacity="0.5"/><circle cx="352" cy="145" r="1.5" fill="#c8dff5" opacity="0.6"/><circle cx="190" cy="155" r="1" fill="#c8dff5" opacity="0.45"/>
+        <!-- Constellation lines -->
+        <line x1="80" y1="40" x2="155" y2="22" stroke="#4a9fd4" stroke-width="0.4" opacity="0.4"/>
+        <line x1="155" y1="22" x2="225" y2="52" stroke="#4a9fd4" stroke-width="0.4" opacity="0.4"/>
+        <line x1="225" y1="52" x2="305" y2="28" stroke="#4a9fd4" stroke-width="0.4" opacity="0.4"/>
+        <line x1="305" y1="28" x2="365" y2="68" stroke="#4a9fd4" stroke-width="0.4" opacity="0.4"/>
+        <line x1="155" y1="22" x2="130" y2="105" stroke="#4a9fd4" stroke-width="0.4" opacity="0.3"/>
+        <line x1="225" y1="52" x2="265" y2="115" stroke="#4a9fd4" stroke-width="0.4" opacity="0.3"/>
+        <line x1="130" y1="105" x2="48" y2="135" stroke="#4a9fd4" stroke-width="0.4" opacity="0.3"/>
+        <line x1="265" y1="115" x2="352" y2="145" stroke="#4a9fd4" stroke-width="0.4" opacity="0.3"/>
+        <!-- Halo around main star -->
+        <circle cx="225" cy="52" r="9" fill="none" stroke="#4a9fd4" stroke-width="0.6" opacity="0.4"/>
+        <circle cx="225" cy="52" r="18" fill="none" stroke="#4a9fd4" stroke-width="0.3" opacity="0.2"/>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#4a9fd4" opacity="0.4" letter-spacing="5">MINDSET</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Mindset</div><div class="deco-line"></div>
+      <div class="quote">The thinking that guides my intelligence is far more powerful than how much intelligence I have.</div>
+      <div class="sub">— The Magic of Thinking Big</div>
+    </div>
+  </div>
+
+  <!-- DRIVE / LIGHTNING -->
+  <div class="poster theme-copper">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#120a05"/>
+        <defs><linearGradient id="bolt" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f0c89a"/><stop offset="100%" stop-color="#e0823a"/></linearGradient></defs>
+        <!-- Radial burst -->
+        <g transform="translate(200,88)" stroke="#e0823a" fill="none" opacity="0.28">
+          <line x1="0" y1="-78" x2="0" y2="-50"/><line x1="55" y1="-55" x2="35" y2="-35"/><line x1="78" y1="0" x2="50" y2="0"/>
+          <line x1="55" y1="55" x2="35" y2="35"/><line x1="0" y1="78" x2="0" y2="50"/><line x1="-55" y1="55" x2="-35" y2="35"/>
+          <line x1="-78" y1="0" x2="-50" y2="0"/><line x1="-55" y1="-55" x2="-35" y2="-35"/>
+        </g>
+        <!-- Lightning bolt -->
+        <polygon points="192,18 170,92 200,84 186,168 218,80 190,88" fill="url(#bolt)" opacity="0.82"/>
+        <!-- Glow rings -->
+        <circle cx="200" cy="90" r="52" fill="none" stroke="#e0823a" stroke-width="0.5" opacity="0.3"/>
+        <circle cx="200" cy="90" r="78" fill="none" stroke="#e0823a" stroke-width="0.3" opacity="0.18"/>
+        <circle cx="200" cy="90" r="108" fill="none" stroke="#e0823a" stroke-width="0.2" opacity="0.1"/>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#e0823a" opacity="0.4" letter-spacing="5">UNSTOPPABLE</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Drive</div><div class="deco-line"></div>
+      <div class="quote">I have enormous drive. Nothing can stop me, Rishabh. Nothing. I will surely succeed.</div>
+      <div class="sub">You were built for this. Go Forward.</div>
+    </div>
+  </div>
+
+  <!-- HEALTH / HEARTBEAT -->
+  <div class="poster theme-green">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#040f08"/>
+        <defs><radialGradient id="hg" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#3ab86a" stop-opacity="0.15"/><stop offset="100%" stop-color="#040f08" stop-opacity="0"/></radialGradient></defs>
+        <ellipse cx="200" cy="92" rx="130" ry="90" fill="url(#hg)"/>
+        <!-- ECG line -->
+        <polyline points="18,92 75,92 98,48 114,125 130,92 162,92 178,28 193,148 202,92 232,92 252,92 275,92" fill="none" stroke="#3ab86a" stroke-width="1.6" opacity="0.75"/>
+        <polyline points="275,92 360,92" fill="none" stroke="#3ab86a" stroke-width="1.6" opacity="0.35"/>
+        <!-- Heart at end -->
+        <g transform="translate(345,92)">
+          <path d="M0,-20 C-5,-30 -24,-30 -24,-10 C-24,5 0,24 0,24 C0,24 24,5 24,-10 C24,-30 5,-30 0,-20 Z" fill="none" stroke="#3ab86a" stroke-width="1.2" opacity="0.65"/>
+        </g>
+        <!-- Leaf accents -->
+        <ellipse cx="90" cy="150" rx="18" ry="9" fill="#3ab86a" opacity="0.08" transform="rotate(-30,90,150)"/>
+        <ellipse cx="315" cy="38" rx="18" ry="9" fill="#3ab86a" opacity="0.08" transform="rotate(20,315,38)"/>
+        <circle cx="58" cy="52" r="1.5" fill="#3ab86a" opacity="0.4"/><circle cx="342" cy="148" r="1.5" fill="#3ab86a" opacity="0.4"/>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#3ab86a" opacity="0.4" letter-spacing="5">HEALTH &amp; VITALITY</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Health</div><div class="deco-line"></div>
+      <div class="quote">I am super healthy, energized, and vital. Every cell in my body is thriving today.</div>
+      <div class="sub">I am the youngest, healthiest version of myself. Always.</div>
+    </div>
+  </div>
+
+  <!-- HAIR -->
+  <div class="poster theme-green">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#040f08"/>
+        <!-- Flowing hair lines -->
+        <g fill="none" stroke="#3ab86a" opacity="0.42">
+          <path d="M158,0 Q148,42 168,84 Q184,124 174,185" stroke-width="1.2"/>
+          <path d="M172,0 Q163,46 178,88 Q193,128 184,185" stroke-width="1"/>
+          <path d="M186,0 Q182,52 194,94 Q204,134 200,185" stroke-width="1.6"/>
+          <path d="M200,0 Q202,57 208,98 Q214,138 215,185" stroke-width="1"/>
+          <path d="M214,0 Q220,52 222,92 Q224,132 230,185" stroke-width="1.2"/>
+          <path d="M228,0 Q236,46 234,88 Q232,128 244,185" stroke-width="1"/>
+          <path d="M242,0 Q254,42 248,84 Q244,124 260,185" stroke-width="1.2"/>
+        </g>
+        <!-- Shine -->
+        <path d="M182,12 Q179,32 186,52" fill="none" stroke="#b8e8c8" stroke-width="2" opacity="0.5"/>
+        <path d="M208,6 Q206,26 212,46" fill="none" stroke="#b8e8c8" stroke-width="2" opacity="0.4"/>
+        <!-- Side circles -->
+        <circle cx="78" cy="92" r="26" fill="none" stroke="#3ab86a" stroke-width="0.5" opacity="0.3"/>
+        <circle cx="78" cy="92" r="16" fill="none" stroke="#3ab86a" stroke-width="0.4" opacity="0.2"/>
+        <circle cx="322" cy="92" r="26" fill="none" stroke="#3ab86a" stroke-width="0.5" opacity="0.3"/>
+        <circle cx="322" cy="92" r="16" fill="none" stroke="#3ab86a" stroke-width="0.4" opacity="0.2"/>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#3ab86a" opacity="0.4" letter-spacing="5">HAIR &amp; GROWTH</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Hair &amp; Vitality</div><div class="deco-line"></div>
+      <div class="quote">My hair is thick, strong, lustrous, and growing beautifully stronger every single day.</div>
+      <div class="sub">Vibrant outside. Thriving inside.</div>
+    </div>
+  </div>
+
+  <!-- 100x INVESTOR -->
+  <div class="poster theme-silver">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#0d0d0d"/>
+        <defs><linearGradient id="chart" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#aaaaaa" stop-opacity="0.04"/><stop offset="100%" stop-color="#aaaaaa" stop-opacity="0.18"/></linearGradient></defs>
+        <!-- Grid -->
+        <line x1="48" y1="28" x2="382" y2="28" stroke="#252525" stroke-width="0.5"/>
+        <line x1="48" y1="58" x2="382" y2="58" stroke="#252525" stroke-width="0.5"/>
+        <line x1="48" y1="88" x2="382" y2="88" stroke="#252525" stroke-width="0.5"/>
+        <line x1="48" y1="118" x2="382" y2="118" stroke="#252525" stroke-width="0.5"/>
+        <line x1="48" y1="148" x2="382" y2="148" stroke="#252525" stroke-width="0.5"/>
+        <!-- Exponential chart -->
+        <polyline points="48,147 82,144 116,142 148,140 168,137 188,132 208,124 228,114 248,100 268,80 288,57 308,36 328,24 348,16 368,10" fill="none" stroke="#e8e8e8" stroke-width="1.6" opacity="0.75"/>
+        <polygon points="48,150 48,147 82,144 116,142 148,140 168,137 188,132 208,124 228,114 248,100 268,80 288,57 308,36 328,24 348,16 368,10 368,150" fill="url(#chart)"/>
+        <!-- 100x badge -->
+        <circle cx="368" cy="10" r="5" fill="#e8e8e8" opacity="0.9"/>
+        <text x="358" y="8" font-family="'Bebas Neue',sans-serif" font-size="16" fill="#e8e8e8" opacity="0.85">100X</text>
+        <!-- Axes -->
+        <line x1="48" y1="14" x2="48" y2="152" stroke="#444" stroke-width="0.8"/>
+        <line x1="48" y1="148" x2="382" y2="148" stroke="#444" stroke-width="0.8"/>
+        <circle cx="48" cy="147" r="3" fill="#aaaaaa" opacity="0.5"/>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#aaaaaa" opacity="0.4" letter-spacing="5">100X WEALTH</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Investing &amp; Wealth</div><div class="deco-line"></div>
+      <div class="quote">I am a world-class investor. I spot 100x opportunities before the crowd even notices them.</div>
+      <div class="sub">Lucrative opportunities always flow my way.</div>
+    </div>
+  </div>
+
+  <!-- ABUNDANCE -->
+  <div class="poster theme-gold">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#1a1005"/>
+        <defs><radialGradient id="coin" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#f0d99a" stop-opacity="0.28"/><stop offset="100%" stop-color="#c9963a" stop-opacity="0.04"/></radialGradient></defs>
+        <!-- Coins -->
+        <circle cx="115" cy="105" r="42" fill="url(#coin)" stroke="#c9963a" stroke-width="1" opacity="0.6"/>
+        <circle cx="115" cy="105" r="32" fill="none" stroke="#c9963a" stroke-width="0.5" opacity="0.4"/>
+        <text x="115" y="112" text-anchor="middle" font-family="'Playfair Display',serif" font-size="24" fill="#f0d99a" opacity="0.72">$</text>
+        <circle cx="200" cy="78" r="52" fill="url(#coin)" stroke="#c9963a" stroke-width="1" opacity="0.7"/>
+        <circle cx="200" cy="78" r="40" fill="none" stroke="#c9963a" stroke-width="0.5" opacity="0.4"/>
+        <text x="200" y="86" text-anchor="middle" font-family="'Playfair Display',serif" font-size="30" fill="#f0d99a" opacity="0.82">$</text>
+        <circle cx="292" cy="108" r="36" fill="url(#coin)" stroke="#c9963a" stroke-width="1" opacity="0.5"/>
+        <circle cx="292" cy="108" r="27" fill="none" stroke="#c9963a" stroke-width="0.5" opacity="0.3"/>
+        <text x="292" y="115" text-anchor="middle" font-family="'Playfair Display',serif" font-size="20" fill="#f0d99a" opacity="0.62">$</text>
+        <!-- Sparkles -->
+        <text x="48" y="48" font-size="12" fill="#f0d99a" opacity="0.4">✦</text>
+        <text x="342" y="145" font-size="10" fill="#f0d99a" opacity="0.3">✦</text>
+        <text x="160" y="162" font-size="8" fill="#f0d99a" opacity="0.3">✦</text>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#c9963a" opacity="0.4" letter-spacing="5">ABUNDANCE</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Abundance</div><div class="deco-line"></div>
+      <div class="quote">Money flows to me easily, frequently, and abundantly. Abundance is my natural state.</div>
+      <div class="sub">I always pay myself first. My money works hard for me.</div>
+    </div>
+  </div>
+
+  <!-- LOVE / HEART -->
+  <div class="poster theme-crimson">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#130308"/>
+        <defs><radialGradient id="heartg" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#d4526a" stop-opacity="0.28"/><stop offset="100%" stop-color="#130308" stop-opacity="0"/></radialGradient></defs>
+        <ellipse cx="200" cy="92" rx="125" ry="90" fill="url(#heartg)"/>
+        <!-- Large heart -->
+        <g transform="translate(200,105)">
+          <path d="M0,-48 C-8,-70 -55,-70 -55,-32 C-55,-6 0,32 0,32 C0,32 55,-6 55,-32 C55,-70 8,-70 0,-48 Z" fill="none" stroke="#d4526a" stroke-width="1.5" opacity="0.62"/>
+          <path d="M0,-30 C-5,-42 -32,-42 -32,-20 C-32,-4 0,20 0,20 C0,20 32,-4 32,-20 C32,-42 5,-42 0,-30 Z" fill="#d4526a" opacity="0.1"/>
+        </g>
+        <!-- Small hearts -->
+        <g transform="translate(98,60)" opacity="0.3"><path d="M0,-13 C-2,-19 -16,-19 -16,-8 C-16,-1 0,8 0,8 C0,8 16,-1 16,-8 C16,-19 2,-19 0,-13 Z" fill="#d4526a"/></g>
+        <g transform="translate(312,72)" opacity="0.25"><path d="M0,-11 C-2,-16 -13,-16 -13,-6 C-13,-1 0,7 0,7 C0,7 13,-1 13,-6 C13,-16 2,-16 0,-11 Z" fill="#d4526a"/></g>
+        <g transform="translate(78,138)" opacity="0.18"><path d="M0,-9 C-1,-13 -10,-13 -10,-5 C-10,-1 0,6 0,6 C0,6 10,-1 10,-5 C10,-13 1,-13 0,-9 Z" fill="#d4526a"/></g>
+        <circle cx="48" cy="40" r="1.5" fill="#f5c8d5" opacity="0.5"/><circle cx="352" cy="50" r="1.5" fill="#f5c8d5" opacity="0.5"/>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#d4526a" opacity="0.4" letter-spacing="5">LOVE</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Love &amp; Soulmate</div><div class="deco-line"></div>
+      <div class="quote">The woman of my life is on her way to me right now. I am completely ready for her.</div>
+      <div class="sub">I give love freely and I receive it graciously.</div>
+    </div>
+  </div>
+
+  <!-- PARTNERSHIP / RINGS -->
+  <div class="poster theme-crimson">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#130308"/>
+        <defs><radialGradient id="rg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#d4526a" stop-opacity="0.18"/><stop offset="100%" stop-color="#130308" stop-opacity="0"/></radialGradient></defs>
+        <ellipse cx="200" cy="92" rx="130" ry="88" fill="url(#rg)"/>
+        <!-- Interlocking rings -->
+        <g fill="none" stroke="#d4526a">
+          <circle cx="165" cy="92" r="58" stroke-width="1.5" opacity="0.6"/>
+          <circle cx="235" cy="92" r="58" stroke-width="1.5" opacity="0.6"/>
+        </g>
+        <!-- Ring gems -->
+        <circle cx="165" cy="34" r="4" fill="#f5c8d5" opacity="0.65"/>
+        <circle cx="235" cy="34" r="4" fill="#f5c8d5" opacity="0.65"/>
+        <!-- Stars -->
+        <circle cx="55" cy="48" r="1" fill="#f5c8d5" opacity="0.5"/><circle cx="345" cy="138" r="1" fill="#f5c8d5" opacity="0.5"/>
+        <circle cx="75" cy="145" r="1.5" fill="#f5c8d5" opacity="0.4"/><circle cx="325" cy="42" r="1" fill="#f5c8d5" opacity="0.4"/>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#d4526a" opacity="0.4" letter-spacing="5">PARTNERSHIP</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Partnership</div><div class="deco-line"></div>
+      <div class="quote">I am a loving, strong, and emotionally available partner. I deserve and attract extraordinary love.</div>
+      <div class="sub">My relationship is built on trust, passion, and mutual growth.</div>
+    </div>
+  </div>
+
+  <!-- PEACE / MANDALA -->
+  <div class="poster theme-violet">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#0a0515"/>
+        <defs><radialGradient id="vg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#9a6ad4" stop-opacity="0.22"/><stop offset="100%" stop-color="#0a0515" stop-opacity="0"/></radialGradient></defs>
+        <ellipse cx="200" cy="92" rx="132" ry="90" fill="url(#vg)"/>
+        <!-- Mandala -->
+        <g transform="translate(200,92)" fill="none" stroke="#9a6ad4">
+          <circle r="62" stroke-width="0.8" opacity="0.5"/>
+          <circle r="42" stroke-width="0.6" opacity="0.4"/>
+          <circle r="22" stroke-width="0.5" opacity="0.4"/>
+          <ellipse rx="22" ry="62" stroke-width="0.5" opacity="0.35"/>
+          <ellipse rx="22" ry="62" stroke-width="0.5" opacity="0.35" transform="rotate(60)"/>
+          <ellipse rx="22" ry="62" stroke-width="0.5" opacity="0.35" transform="rotate(120)"/>
+          <polygon points="0,-52 45,26 -45,26" stroke-width="0.5" opacity="0.28"/>
+          <polygon points="0,52 45,-26 -45,-26" stroke-width="0.5" opacity="0.28"/>
+        </g>
+        <circle cx="48" cy="38" r="1.5" fill="#d5c8f5" opacity="0.5"/><circle cx="352" cy="28" r="1" fill="#d5c8f5" opacity="0.5"/>
+        <circle cx="58" cy="155" r="1" fill="#d5c8f5" opacity="0.4"/><circle cx="342" cy="158" r="1.5" fill="#d5c8f5" opacity="0.5"/>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#9a6ad4" opacity="0.4" letter-spacing="5">PEACE &amp; SERENITY</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Peace</div><div class="deco-line"></div>
+      <div class="quote">God, grant me serenity to accept what I cannot change, courage to change what I can, and wisdom to know the difference.</div>
+      <div class="sub">Inner peace is my greatest power.</div>
+    </div>
+  </div>
+
+  <!-- MOUNTAINS / RESILIENCE -->
+  <div class="poster theme-violet">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#0a0515"/>
+        <defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9a6ad4" stop-opacity="0.5"/><stop offset="100%" stop-color="#9a6ad4" stop-opacity="0.04"/></linearGradient></defs>
+        <polygon points="0,165 105,38 210,165" fill="url(#mg)" stroke="#9a6ad4" stroke-width="0.8" opacity="0.5"/>
+        <polygon points="85,165 205,18 325,165" fill="none" stroke="#9a6ad4" stroke-width="1.3" opacity="0.65"/>
+        <polygon points="195,165 302,58 400,165" fill="url(#mg)" stroke="#9a6ad4" stroke-width="0.8" opacity="0.42"/>
+        <!-- Snow caps -->
+        <polygon points="205,18 190,46 220,46" fill="#d5c8f5" opacity="0.42"/>
+        <polygon points="105,38 93,60 117,60" fill="#d5c8f5" opacity="0.28"/>
+        <polygon points="302,58 292,76 312,76" fill="#d5c8f5" opacity="0.28"/>
+        <!-- Stars -->
+        <circle cx="58" cy="22" r="1.5" fill="#d5c8f5" opacity="0.65"/><circle cx="205" cy="6" r="2" fill="#d5c8f5" opacity="0.85"/><circle cx="352" cy="18" r="1.5" fill="#d5c8f5" opacity="0.65"/>
+        <circle cx="142" cy="12" r="1" fill="#d5c8f5" opacity="0.5"/><circle cx="262" cy="10" r="1" fill="#d5c8f5" opacity="0.5"/>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#9a6ad4" opacity="0.4" letter-spacing="5">INNER STRENGTH</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Resilience</div><div class="deco-line"></div>
+      <div class="quote">I am calm in chaos. I am steady in storms. Nothing disturbs my peace without my permission.</div>
+      <div class="sub">Stillness is a superpower. I am unshakeable.</div>
+    </div>
+  </div>
+
+  <!-- VALUE — OPRAH -->
+  <div class="poster theme-silver">
+    <div class="visual-panel">
+      <svg viewBox="0 0 400 185" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="185" fill="#0d0d0d"/>
+        <!-- Upward arrows pattern -->
+        <g fill="none" stroke="#aaaaaa" opacity="0.22">
+          <line x1="80" y1="155" x2="80" y2="48"/><polygon points="80,38 73,58 87,58" fill="#aaaaaa" opacity="0.22"/>
+          <line x1="140" y1="155" x2="140" y2="28"/><polygon points="140,18 133,38 147,38" fill="#aaaaaa" opacity="0.22"/>
+          <line x1="200" y1="155" x2="200" y2="12"/><polygon points="200,2 192,22 208,22" fill="#aaaaaa" opacity="0.35"/>
+          <line x1="260" y1="155" x2="260" y2="28"/><polygon points="260,18 253,38 267,38" fill="#aaaaaa" opacity="0.22"/>
+          <line x1="320" y1="155" x2="320" y2="48"/><polygon points="320,38 313,58 327,58" fill="#aaaaaa" opacity="0.22"/>
+        </g>
+        <!-- Giant open quote -->
+        <text x="75" y="135" font-family="'Playfair Display',serif" font-size="88" fill="#aaaaaa" opacity="0.05">"</text>
+        <text x="200" y="178" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#aaaaaa" opacity="0.4" letter-spacing="5">VALUE CREATION</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Know Your Worth</div><div class="deco-line"></div>
+      <div class="quote">When you undervalue what you do, the world undervalues who you are. I know my worth.</div>
+      <div class="sub">— Oprah Winfrey</div>
+    </div>
+  </div>
+
+  <!-- WIDE: CLOSING / NIGHTLY -->
+  <div class="poster theme-crimson wide">
+    <div class="visual-panel">
+      <svg viewBox="0 0 310 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="310" height="280" fill="#130308"/>
+        <defs><radialGradient id="fg" cx="50%" cy="55%" r="60%"><stop offset="0%" stop-color="#d4526a" stop-opacity="0.3"/><stop offset="100%" stop-color="#130308" stop-opacity="0"/></radialGradient></defs>
+        <ellipse cx="155" cy="148" rx="135" ry="118" fill="url(#fg)"/>
+        <!-- Rising sun -->
+        <circle cx="155" cy="162" r="42" fill="none" stroke="#d4526a" stroke-width="1" opacity="0.5"/>
+        <circle cx="155" cy="162" r="26" fill="#d4526a" opacity="0.18"/>
+        <circle cx="155" cy="162" r="13" fill="#d4526a" opacity="0.42"/>
+        <!-- Rays -->
+        <g stroke="#d4526a" stroke-width="0.8" opacity="0.4">
+          <line x1="155" y1="108" x2="155" y2="84"/><line x1="195" y1="122" x2="212" y2="105"/><line x1="210" y1="162" x2="234" y2="162"/>
+          <line x1="195" y1="202" x2="212" y2="219"/><line x1="155" y1="216" x2="155" y2="240"/><line x1="115" y1="202" x2="98" y2="219"/>
+          <line x1="100" y1="162" x2="76" y2="162"/><line x1="115" y1="122" x2="98" y2="105"/>
+        </g>
+        <!-- Stars -->
+        <circle cx="38" cy="38" r="1.5" fill="#f5c8d5" opacity="0.65"/><circle cx="275" cy="48" r="1.5" fill="#f5c8d5" opacity="0.65"/>
+        <circle cx="48" cy="248" r="1" fill="#f5c8d5" opacity="0.4"/><circle cx="265" cy="235" r="1" fill="#f5c8d5" opacity="0.4"/>
+        <!-- OM -->
+        <text x="155" y="52" text-anchor="middle" font-size="30" fill="#d4526a" opacity="0.28">ॐ</text>
+      </svg>
+    </div>
+    <div class="text-panel">
+      <div class="category">Rishabh's Nightly Commitment</div>
+      <div class="deco-line"></div>
+      <div class="quote">Today is my best day. I am my best. I am the winner. God is always with me.<br/><span style="font-family:'Dancing Script',cursive;font-size:1.4rem;font-weight:400;opacity:0.8;">भगवान हमेशा मेरे साथ है।</span></div>
+      <div class="sub">Say this last. Every single night. Sleep knowing tomorrow is even greater.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page-footer">
+  <p>Print these. Frame these. Read them with full emotion. Feel them. Live them.</p>
+  <p style="margin-top:8px;">— Morning &amp; Evening, Every Day, Without Exception —</p>
+</div>
+
+</body>
+</html>
